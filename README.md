@@ -7,3 +7,7 @@
 ### v.1.1
 [AquaGreen Specification v.1.1.pdf](https://github.com/user-attachments/files/16512778/AquaGreen.Specification.v.1.1.pdf)
 
+### v.1.2
+
+[AquaGreen Specification v.1.2.pdf](https://github.com/user-attachments/files/16518087/AquaGreen.Specification.v.1.2.pdf)
+
