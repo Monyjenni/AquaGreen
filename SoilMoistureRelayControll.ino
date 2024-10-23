@@ -8,6 +8,7 @@ void setup() {
   pinMode(13,OUTPUT); //Set pin 13 as OUTPUT pin, to send signal to relay
   pinMode(8,INPUT);
    //Set pin 8 as input pin, to receive data from Soil moisture sensor.
+  Serial.begin(9600); //Initialize serial communication
 }
 
 void loop() { 
