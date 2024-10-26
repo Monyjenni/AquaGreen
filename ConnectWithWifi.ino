@@ -1,22 +1,16 @@
-/*Plant Watering System
- PP - Final Year
- */
-//include the lib files
-#include <LiquidCrystal_r2c.h>
-#define BLynk_PRINT Serial
+#define BLYNK_TEMPLATE_ID "TMPL6CqtyYMKo"
+#define BLYNK_TEMPLATE_NAME "plant watering system"
+#define BLYNK_PRINT Serial
 #include <ESP8266WiFi.h>
 #include <BlynkSimpleEsp8266.h>
 
-//Initialize the LCD display
-LiquidCrystal_r2c lcd(0x27, 16, 2);
-char auth[] = "";
-char ssid[] = ""; //need wifi even not use LCD?
-char pass[] = "";
+char auth[] = "1AC5i4K0AYyOEd6pp0Ud_JcUP-U-uj24";
+char ssid[] = "Kung Fu Tea Ground Floor 5G";
+char pass[] = "cambodia@168";
 
 BlynkTimer timer;
 bool Relay = 0;
 
-//Define component pins
 #define sensor A0
 #define waterPump D3
 
@@ -24,55 +18,41 @@ void setup() {
   Serial.begin(9600);
   pinMode(waterPump, OUTPUT);
   digitalWrite(waterPump, HIGH);
-  lcd.init(); //not
-  lcd.backlight(); //not
+  Blynk.begin(auth, ssid, pass, "blynk.cloud", 80);
 
-  BLynk.begin(auth, ssid, pass, "blynk.cloud", 80);
-
-  lcd.setCursor(1,0);
-  lcd.print("System Loading")
-  for (int a = 0; a <= 15; a++) {
-    lcd.setCursor(a, 1);
-    lcd.print(".");
-    delay(500);
+  // Print a message to the Serial Monitor for debugging
+  Serial.println("System Loading...");
+  delay(2000); // Short delay for system loading message
+  Serial.println("System Ready");
+  
+  // Set interval to call soilMoistureSensor() every second
+  timer.setInterval(1000L, soilMoistureSensor);
 }
-}
-lcd.clear();
 
-//call the func()
-timer.setInterval(100L, soilMoistureSensor); //100L water
-
-Blynk_WRITE(V1) {
+BLYNK_WRITE(V1) {
   Relay = param.asInt();
-
   if (Relay == 1) {
     digitalWrite(waterPump, LOW);
-    lcd.setCursor(0, 1);
-    lcd.print("Motor is ON");
+    Serial.println("Motor is ON");
   } else {
     digitalWrite(waterPump, HIGH);
-    lcd.setCursor(0, 1);
-    lcd.print("Motor is OFF");
+    Serial.println("Motor is OFF");
   }
 }
 
-//Get the soil moisture values
+// Get the soil moisture values
 void soilMoistureSensor() {
   int value = analogRead(sensor);
   value = map(value, 0, 1024, 0, 100);
-
   value = (value - 100) * -1;
 
-  Blynk.virtualWrite(V0, value);
-  lcd.setCursor(0, 0);
-  lcd.print("Moisture :");
-  lcd.print(value);
-  lcd.print(" ");
+  Blynk.virtualWrite(V0, value);  // Send moisture value to Blynk
+  Serial.print("Moisture: ");
+  Serial.print(value);
+  Serial.println(" %");
 }
 
 void loop() {
-  Blynk.run(); //run the blynk library
-  timer.run(); // Run the Blynk timer
-}
-  
+  Blynk.run();  // Run Blynk library
+  timer.run();  // Run the Blynk timer
 }
