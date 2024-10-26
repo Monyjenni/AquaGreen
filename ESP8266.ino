@@ -1,48 +1,26 @@
-// #include <ESP8266WiFi.h> // Include the ESP8266 WiFi library
 
-// // Replace with your network credentials
-// const char* ssid = "LET STORE";
-// const char* password = "LET@2022";
-
-// void setup() {
-//   // Start the Serial communication
-//   Serial.begin(115200);
-//   delay(10);
-
-//   // Print the WiFi SSID and Password
-//   Serial.println("WiFi Credentials:");
-//   Serial.print("SSID: ");
-//   Serial.println(ssid);
-//   Serial.print("Password: ");
-//   Serial.println(password);
-
-//   // Connect to WiFi
-//   Serial.println("\nConnecting to WiFi...");
-//   WiFi.begin(ssid, password);
-
-//   // Wait until the board connects to WiFi
-//   while (WiFi.status() != WL_CONNECTED) {
-//     delay(1000);
-//     Serial.print(".");
-//   }
-
-//   // Print the IP address
-//   Serial.println("\nConnected to WiFi!");
-//   Serial.print("IP Address: ");
-//   Serial.println(WiFi.localIP());
-// }
-
-// void loop() {
-//   // Nothing in loop
-// }
+#define RELAY_PIN D3   // Pin connected to the relay
+#define MOISTURE_SENSOR_PIN A0  // Pin connected to the moisture sensor
 
 void setup() {
-  Serial.begin(9600);  // Start serial communication
+  Serial.begin(9600);            // Start serial communication
+  pinMode(RELAY_PIN, OUTPUT);    // Set the relay pin as an output
+  digitalWrite(RELAY_PIN, HIGH); // Turn off the relay initially (HIGH for active low relay)
 }
 
 void loop() {
-  int sensorValue = analogRead(A0);  // Read analog value from sensor
+  int sensorValue = analogRead(MOISTURE_SENSOR_PIN);  // Read analog value from sensor
   Serial.print("Moisture Level: ");
-  Serial.println(sensorValue);        // Print value to Serial Monitor
-  delay(1000);                        // Wait 1 second between readings
+  Serial.println(sensorValue);                            // Print value to Serial Monitor
+
+  // Control relay based on moisture level
+  if (sensorValue < 300) { // Adjust this threshold based on your testing
+    digitalWrite(RELAY_PIN, LOW); // Turn on the water pump (activating the relay)
+    Serial.println("Water Pump ON");
+  } else {
+    digitalWrite(RELAY_PIN, HIGH); // Turn off the water pump (deactivating the relay)
+    Serial.println("Water Pump OFF");
+  }
+
+  delay(1000); // Wait 1 second between readings
 }
